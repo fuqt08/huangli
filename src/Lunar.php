@@ -256,16 +256,17 @@ class Lunar
     public function getJieqiData($year, $num)
     {
         static $jqData;
-        if (isset($jqData[$num])) {
-            $arr = $jqData[$num];
+        //不足两位数补全
+        $str = str_pad($num, 2, "0", STR_PAD_LEFT);
+        if (isset($jqData[$str])) {
+            $arr = $jqData[$str];
         } else {
-            $str = str_pad($num, 2, "0", STR_PAD_LEFT);
             $fp = fopen(__DIR__ . '/data/' . $str . '.dat', 'r');
-            $content = fread($fp, filesize(__DIR__ . '/data/' . $num . '.dat'));
-            $jqData[$num] = $arr = explode("\n", $content);
+            $content = fread($fp, filesize(__DIR__ . '/data/' . $str . '.dat'));
+            $jqData[$str] = $arr = explode("\n", $content);
             fclose($fp);
         }
-        return [$this->jieQi[$num], trim($arr[$year])];
+        return [$this->jieQi[$str], trim($arr[$year])];
     }
 
     /**
