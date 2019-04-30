@@ -1,0 +1,19 @@
+{
+    "name": "lunar/huangli",
+    "description": "黄历算法",
+    "license": "MIT",
+    "authors": [
+      {
+        "name": "fuqt08"
+      }
+    ],
+    "require": {
+      "php": ">=5.4.0"
+    },
+    "minimum-stability": "dev",
+    "autoload": {
+      "psr-4": {
+        "lunar\\": "src/"
+      }
+    }
+  }
