@@ -527,7 +527,8 @@ class Hunagli extends Lunar
         $list = ['寅' => 1, '卯' => 2, '辰' => 3, '巳' => 4, '午' => 5, '未' => 6, '申' => 7, '酉' => 8, '戌' => 9, '亥' => 10, '子' => 11, '丑' => 12];
         $rgz = $this->getLunarGanzhiDay();
         $gz = join('', $rgz);
-        $res = $this->getJixiongArr($gz, $list[$mgz[1]]);
+        $jiXiongArr=$this->getJixiongArr();
+        $res = $jiXiongArr[$gz][$list[$mgz[1]]];
         $list = [
             'jishen' => [],
             'xiong' => [],
