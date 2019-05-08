@@ -440,11 +440,10 @@ class Lunar
         if (is_string($year) && !is_numeric($year) && $year > 0 && $month == 0 && $date == 0) {
             //字符串形式
             $datetime->setTimestamp(strtotime($year));
-        } else if (preg_match("/^(-|\d+)\d+/", $year) && $month == 0 && $date == 0) {
+        } else if (preg_match("/^-?\d+$/", $year) && $month == 0 && $date == 0) {
             //时间戳形式
             $datetime->setTimestamp($year);
         }
-
         if ($year && $month && $date) {
             $datetime->setDate($year, $month, $date);
         }
