@@ -1626,7 +1626,7 @@ class Hunagli extends Lunar
             }
         }
         if (isset($jieRiList['jie'][$time])) {
-            $str[] = array_merge($str, $jieRiList['jie'][$time]);
+            $str = array_merge($str, $jieRiList['jie'][$time]);
         }
         if (isset($jieRiList['fo'][$time])) {
             $str[] = $jieRiList['fo'][$time];
