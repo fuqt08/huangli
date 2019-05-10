@@ -527,7 +527,7 @@ class Hunagli extends Lunar
         $list = ['寅' => 1, '卯' => 2, '辰' => 3, '巳' => 4, '午' => 5, '未' => 6, '申' => 7, '酉' => 8, '戌' => 9, '亥' => 10, '子' => 11, '丑' => 12];
         $rgz = $this->getLunarGanzhiDay();
         $gz = join('', $rgz);
-        $jiXiongArr=$this->getJixiongArr();
+        $jiXiongArr = $this->getJixiongArr();
         $res = $jiXiongArr[$gz][$list[$mgz[1]]];
         $list = [
             'jishen' => [],
@@ -1626,7 +1626,7 @@ class Hunagli extends Lunar
             }
         }
         if (isset($jieRiList['jie'][$time])) {
-            $str[] = $jieRiList['jie'][$time];
+            $str[] = array_merge($str, $jieRiList['jie'][$time]);
         }
         if (isset($jieRiList['fo'][$time])) {
             $str[] = $jieRiList['fo'][$time];
@@ -2351,27 +2351,28 @@ class Hunagli extends Lunar
      * @param $isCache bool 是否走缓存默认是
      * @return bool|array
      */
-    public static function getJieRiListByYear($year, $isCache = true)
+    public static function getJieRiListByYear($year)
     {
-        $cacheKeyName = "lunar/hunagli_{$year}";
-        $res = cache($cacheKeyName);
-        if (empty($res) || $isCache == false) {
+        static $huangliJieri;
+        if (isset($huangliJieri[$year])) {
+            $res = $huangliJieri[$year];
+        } else {
+            $res = [];
             //农历节日
             $nongliJieRi = [
-                "腊月初八" => "腊八节",
-                "腊月廿三" => "北方小年",
-                "腊月廿四" => "南方小年",
-                "腊月三十" => "除夕",
-                "正月初一" => "春节",
-                "正月十五" => "元宵节",
-                "二月初二" => "龙抬头",
-                "三月初三" => "上巳节",
-                "五月初五" => "端午节",
-                "七月初七" => "七夕",
-                "七月十五" => "中元节",
-                "八月十五" => "中秋节",
-                "九月初九" => "重阳节",
-                "十月初一" => "寒衣节"
+                "12_8" => "腊八节",
+                "12_23" => "北方小年",
+                "12_24" => "南方小年",
+                //"1-1" => "春节",
+                "1_15" => "元宵节",
+                "2_2" => "龙抬头",
+                "3_3" => "上巳节",
+                "5_5" => "端午节",
+                "7_7" => "七夕",
+                "7_15" => "中元节",
+                "8_15" => "中秋节",
+                "9_9" => "重阳节",
+                "10_1" => "寒衣节"
             ];
             //公历节日
             $gongliJieRi = [
@@ -2393,14 +2394,14 @@ class Hunagli extends Lunar
                 "5月4日" => "青年节",
                 "5月8日" => "世界微笑日",
                 "5月12日" => "护士节",
-                "5月13日" => "母亲节",
+                //"5月13日" => "母亲节",
                 "5月15日" => "世界家庭日",
                 "5月19日" => "中国旅游日",
                 "5月31日" => "无烟日",
                 "6月1日" => "儿童节",
                 "6月5日" => "世界环境保护日",
                 "6月6日" => "爱眼日",
-                "6月17日" => "父亲节",
+                //"6月17日" => "父亲节",
                 "6月23日" => "国际奥林匹克日",
                 "6月26日" => "反毒品日",
                 "7月1日" => "建党节",
@@ -2445,9 +2446,13 @@ class Hunagli extends Lunar
             $endTime = strtotime(($year + 1) . '-01-01');
             //11月的第几个星期4
             $index = 1;
-            $res = [];
             for ($i = 0; $i <= 366; $i++) {
                 $tmp = strtotime("+{$i} day", $start);
+                //没有前导零 的月份和 第几天
+                $m = (int)date('n', $tmp);
+                $d = (int)date('j', $tmp);
+                //格式数字表示的星期中的第几天 1（表示星期一）到 7（表示星期天）
+                $w = date('N', $tmp);
                 if ($tmp >= $endTime) {
                     continue;
                 }
@@ -2455,33 +2460,37 @@ class Hunagli extends Lunar
                 $lunar = Lunar::date($tmp);
                 $yearMonth = $lunar->getLunarYearMonth();
                 $yearDay = $lunar->getLunarYearDay();
-                $str = '';
-                if (isset($nongliJieRi[$yearMonth[0] . $yearDay[0]])) {
-                    $str = $nongliJieRi[$yearMonth[0] . $yearDay[0]];
-                }
-                $rizi = date('n月j日', $tmp);
-                if (isset($gongliJieRi[$rizi])) {
-                    $str = $gongliJieRi[$rizi];
-                }
-                //判断是11月并且是星期4
-                if (date('n', $tmp) == 11 && date('N', $tmp) == 4) {
-                    $index++;
-                    //感恩节
-                    if ($index == 5) {
-                        $str = '感恩节';
-                    }
-                }
-                //节日
-                if (!empty($str)) {
-                    $res['jie'][$tmp] = $str;
-                }
-                //求佛日
+                //农历月日数字
                 $nL = $yearMonth[1] . '_' . $yearDay[1];
+                //求佛日
                 if (isset($foRiList[$nL])) {
                     $res['fo'][$tmp] = $foRiList[$nL];
                 }
+                //节日
+                if (isset($nongliJieRi[$nL])) {
+                    $res['jie'][$tmp][] = $nongliJieRi[$nL];
+                }
+                if ($nL == '1_1') {
+                    $res['jie'][($tmp - 86400)][] = '除夕';
+                    $res['jie'][$tmp][] = '春节';
+                }
+                $rizi = date('n月j日', $tmp);
+                if (isset($gongliJieRi[$rizi])) {
+                    $res['jie'][$tmp][] = $gongliJieRi[$rizi];
+                }
+                if ($m == 5 && ($d > 7 && $d < 15) && ($w == 7)) {
+
+                    $res['jie'][$tmp][] = '母亲节';
+                }
+                if ($m == 6 && ($d > 14 && $d < 22) && ($w == 7)) {
+                    $res['jie'][$tmp][] = '父亲节';
+                }
+                if ($m == 11 && $w == 4 && ($d > 21 && $d < 29)) {
+                    $res['jie'][$tmp][] = '感恩节';
+                }
+
             }
-            cache($cacheKeyName, $res, 86400 * 7);
+            $huangliJieri[$year] = $res;
         }
 
         return $res;
