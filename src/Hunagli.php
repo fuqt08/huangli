@@ -2304,10 +2304,12 @@ class Hunagli extends Lunar
             '15' => "秋分", '16' => "寒露", '17' => "霜降", '18' => "立冬", '19' => "小雪",
             '20' => "大雪", '21' => "冬至", '22' => '小寒', '23' => '大寒'
         ];
-        $cacheKeyName = "Alljieqi_" . $year;
-        //获取节气数据
-        $res = cache($cacheKeyName);
-        if (empty($res)) {
+        static $jqDataAllYear;
+        $res = [];
+        if (isset($jqDataAllYear[$year])) {
+            $res = $jqDataAllYear[$year];
+        } else {
+            //获取节气数据
             foreach ($jieQi as $k => $v) {
                 $fp = fopen(__DIR__ . '/data/' . $k . '.dat', 'r');
                 $content = fread($fp, filesize(__DIR__ . '/data/' . $k . '.dat'));
@@ -2316,7 +2318,7 @@ class Hunagli extends Lunar
                 $res[$v] = trim($arr[$year]);
             }
             asort($res);
-            cache($cacheKeyName, $res, 86400);
+            $jqDataAllYear[$year] = $res;
         }
         return $res;
     }
