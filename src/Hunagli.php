@@ -2059,24 +2059,94 @@ class Hunagli extends Lunar
         if ($month < 1 || $month > 12 || $day < 1 || $day > 31) {
             return false;
         }
-        $signs = [
-            ['20' => '水瓶'],
-            ['19' => '双鱼'],
-            ['21' => '白羊'],
-            ['20' => '金牛'],
-            ['21' => '双子'],
-            ['22' => '巨蟹'],
-            ['23' => '狮子'],
-            ['23' => '处女'],
-            ['23' => '天秤'],
-            ['24' => '天蝎'],
-            ['23' => '射手'],
-            ['22' => '摩羯']
-        ];
-        list($start, $name) = each($signs[$month - 1]);
-        if ($day < $start)
-            list($start, $name) = each($signs[($month - 2 < 0) ? 11 : $month - 2]);
-        return $name;
+        $name = '';
+        switch ($month) {
+            case 1:
+                if ($day <= 31 && $day >= 20) {
+                    $name = '水瓶';
+                } else {
+                    $name = '摩羯';
+                }
+                break;
+            case 2:
+                if ($day <= 18 && $day >= 1) {
+                    $name = '水瓶';
+                } else {
+                    $name = '双鱼';
+                }
+                break;
+            case 3:
+                if ($day <= 20 && $day >= 1) {
+                    $name = '双鱼';
+                } else {
+                    $name = '白羊';
+                }
+                break;
+            case 4:
+                if ($day <= 19 && $day >= 1) {
+                    $name = '白羊';
+                } else {
+                    $name = '金牛';
+                }
+                break;
+            case 5:
+                if ($day <= 20 && $day >= 1) {
+                    $name = '金牛';
+                } else {
+                    $name = '双子';
+                }
+                break;
+            case 6:
+                if ($day <= 21 && $day >= 1) {
+                    $name = '双子';
+                } else {
+                    $name = '巨蟹';
+                }
+                break;
+            case 7:
+                if ($day <= 22 && $day >= 1) {
+                    $name = '巨蟹';
+                } else {
+                    $name = '狮子';
+                }
+                break;
+            case 8:
+                if ($day <= 22 && $day >= 1) {
+                    $name = '狮子';
+                } else {
+                    $name = '处女';
+                }
+                break;
+            case 9:
+                if ($day <= 23 && $day >= 1) {
+                    $name = '处女';
+                } else {
+                    $name = '天秤';
+                }
+                break;
+            case 10:
+                if ($day <= 23 && $day >= 1) {
+                    $name = '天秤';
+                } else {
+                    $name = '天蝎';
+                }
+                break;
+            case 11:
+                if ($day <= 22 && $day >= 1) {
+                    $name = '天蝎';
+                } else {
+                    $name = '射手';
+                }
+                break;
+            case 12:
+                if ($day <= 23 && $day >= 1) {
+                    $name = '射手';
+                } else {
+                    $name = '摩羯';
+                }
+                break;
+        }
+        return $name ?: false;
     }
 
     /**
