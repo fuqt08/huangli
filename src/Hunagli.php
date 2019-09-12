@@ -2139,7 +2139,7 @@ class Hunagli extends Lunar
                 }
                 break;
             case 12:
-                if ($day <= 23 && $day >= 1) {
+                if ($day <= 21 && $day >= 1) {
                     $name = '射手';
                 } else {
                     $name = '摩羯';
